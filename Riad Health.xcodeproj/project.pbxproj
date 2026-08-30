@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B09CFE863044B20D00475DAE /* LucideIcons in Frameworks */ = {isa = PBXBuildFile; productRef = B09CFE853044B20D00475DAE /* LucideIcons */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		B0A2B6E230437C0500010DEF /* Riad Health.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Riad Health.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B09CFE863044B20D00475DAE /* LucideIcons in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = "Riad Health";
 			packageProductDependencies = (
+				B09CFE853044B20D00475DAE /* LucideIcons */,
 			);
 			productName = "Riad Health";
 			productReference = B0A2B6E230437C0500010DEF /* Riad Health.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = B0A2B6D930437C0500010DEF;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B09CFE843044B20D00475DAE /* XCLocalSwiftPackageReference "../../Downloads/lucide-icons-swift-main" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B0A2B6E330437C0500010DEF /* Products */;
 			projectDirPath = "";
@@ -345,6 +354,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B09CFE843044B20D00475DAE /* XCLocalSwiftPackageReference "../../Downloads/lucide-icons-swift-main" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../Downloads/lucide-icons-swift-main";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B09CFE853044B20D00475DAE /* LucideIcons */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LucideIcons;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B0A2B6DA30437C0500010DEF /* Project object */;
 }

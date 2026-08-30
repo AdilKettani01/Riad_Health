@@ -6,6 +6,15 @@
 //
 
 import SwiftUI
+import LucideIcons
+
+#if canImport(UIKit)
+import UIKit
+#endif
+
+#if canImport(AppKit)
+import AppKit
+#endif
 
 struct GreetingView: View {
     let name: String
@@ -43,17 +52,21 @@ struct HealthScoreSummary: View {
         }
     }
 }
-
 struct MetricCard: View {
     let metric: HealthMetric
 
     var body: some View {
         VStack(spacing: 6) {
-            Label(metric.title, systemImage: metric.icon)
-                .font(.appSans(size: 13, weight: .medium))
-                .foregroundStyle(Color.darkText)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
+            HStack(spacing: 5) {
+                LucideIconImage(id: metric.icon, fallbackSystemImage: metric.icon)
+                    .frame(width: 14, height: 14)
+
+                Text(metric.title)
+                    .font(.appSans(size: 13, weight: .medium))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .foregroundStyle(Color.darkText)
 
             Text(metric.value)
                 .font(.appSans(size: 18, weight: .bold))
@@ -62,6 +75,41 @@ struct MetricCard: View {
         .frame(maxWidth: .infinity)
         .frame(height: 78)
         .riadCard()
+    }
+}
+
+struct LucideIconImage: View {
+    let id: String
+    let fallbackSystemImage: String
+
+    var body: some View {
+        #if canImport(UIKit)
+        if let image = UIImage(lucideId: id) {
+            Image(uiImage: image)
+                .renderingMode(.template)
+                .resizable()
+                .scaledToFit()
+        } else {
+            Image(systemName: fallbackSystemImage)
+                .resizable()
+                .scaledToFit()
+        }
+        #elseif canImport(AppKit)
+        if let image = NSImage.image(lucideId: id) {
+            Image(nsImage: image)
+                .renderingMode(.template)
+                .resizable()
+                .scaledToFit()
+        } else {
+            Image(systemName: fallbackSystemImage)
+                .resizable()
+                .scaledToFit()
+        }
+        #else
+        Image(systemName: fallbackSystemImage)
+            .resizable()
+            .scaledToFit()
+        #endif
     }
 }
 
@@ -197,9 +245,8 @@ struct InsightBanner: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: "sparkles")
-                .font(.appSans(size: 22, weight: .semibold))
-                .foregroundStyle(Color.primaryGreen)
+            LucideIconImage(id: "trending-up", fallbackSystemImage: "arrow.up.right")
+                .frame(width: 14, height: 14)
 
             Text(message)
                 .font(.appSans(size: 17))

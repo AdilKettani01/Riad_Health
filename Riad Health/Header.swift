@@ -17,9 +17,9 @@ struct Header: View {
 
             Spacer()
 
-            Text("Seed")
-                .font(.appSerif(size: 44))
+            Text("Riad Health")
                 .foregroundStyle(Color.primaryGreen)
+                .font(.custom("DMSerifDisplay-Regular", size: 26))
 
             Spacer()
 
@@ -54,6 +54,8 @@ struct ProfileAvatar: View {
 }
 
 #Preview {
+    let _ = AppFonts.registerFonts()
+
     Header()
         .padding()
         .background(Color.creamBackground)

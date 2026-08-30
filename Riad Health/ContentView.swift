@@ -24,10 +24,10 @@ struct ContentView: View {
                         leftMetric: HealthMetric(
                             title: "Diversity",
                             value: "High",
-                            icon: "sparkles"
+                            icon: "blend"
                         ),
                         rightMetric: HealthMetric(
-                            title: "Inflammation",
+                            title: "Inflam...",
                             value: "Low",
                             icon: "waveform.path.ecg"
                         )
