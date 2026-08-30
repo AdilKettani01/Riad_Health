@@ -19,9 +19,24 @@ enum AppTab: String, CaseIterable, Identifiable {
     var icon: String {
         switch self {
         case .home:
-            return "house.fill"
+            return "house"
         case .tracking:
-            return "chart.xyaxis.line"
+            return "chart-no-axes-column-increasing"
+        case .shop:
+            return "shopping-bag"
+        case .insights:
+            return "lightbulb"
+        case .profile:
+            return "user"
+        }
+    }
+
+    var fallbackIcon: String {
+        switch self {
+        case .home:
+            return "house"
+        case .tracking:
+            return "chart.bar"
         case .shop:
             return "bag"
         case .insights:
@@ -33,12 +48,17 @@ enum AppTab: String, CaseIterable, Identifiable {
 }
 
 struct BottomTabBar: View {
-    let selectedTab: AppTab
+    @Binding var selectedTab: AppTab
 
     var body: some View {
         HStack(spacing: 0) {
             ForEach(AppTab.allCases) { tab in
-                BottomTabItem(tab: tab, isSelected: tab == selectedTab)
+                Button {
+                    selectedTab = tab
+                } label: {
+                    BottomTabItem(tab: tab, isSelected: tab == selectedTab)
+                }
+                .buttonStyle(.plain)
             }
         }
         .padding(.horizontal, 16)
@@ -58,8 +78,7 @@ struct BottomTabItem: View {
 
     var body: some View {
         VStack(spacing: 5) {
-            Image(systemName: tab.icon)
-                .font(.system(size: 24, weight: .medium))
+            LucideIcon(name: tab.icon, fallbackSystemName: tab.fallbackIcon, size: 24)
                 .frame(width: 30, height: 28)
 
             Text(tab.rawValue)
@@ -74,6 +93,6 @@ struct BottomTabItem: View {
 }
 
 #Preview {
-    BottomTabBar(selectedTab: .home)
+    BottomTabBar(selectedTab: .constant(.tracking))
         .background(Color.creamBackground)
 }

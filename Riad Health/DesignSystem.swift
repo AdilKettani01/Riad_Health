@@ -6,6 +6,10 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+import LucideIcons
+#endif
 
 extension Font {
     static func appSerif(size: CGFloat) -> Font {
@@ -34,5 +38,28 @@ struct RiadCardModifier: ViewModifier {
 extension View {
     func riadCard() -> some View {
         modifier(RiadCardModifier())
+    }
+}
+
+struct LucideIcon: View {
+    let name: String
+    let fallbackSystemName: String
+    var size: CGFloat = 24
+
+    var body: some View {
+        #if canImport(UIKit)
+        if let image = UIImage(lucideId: name) {
+            Image(uiImage: image.withRenderingMode(.alwaysTemplate))
+                .resizable()
+                .scaledToFit()
+                .frame(width: size, height: size)
+        } else {
+            Image(systemName: fallbackSystemName)
+                .font(.system(size: size, weight: .regular))
+        }
+        #else
+        Image(systemName: fallbackSystemName)
+            .font(.system(size: size, weight: .regular))
+        #endif
     }
 }
