@@ -9,13 +9,47 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        ZStack(alignment: .bottom) {
+            Color.creamBackground
+                .ignoresSafeArea()
+
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 18) {
+                    Header()
+
+                    GreetingView(name: "Alex", day: 42)
+
+                    HealthScoreSummary(
+                        score: 82,
+                        leftMetric: HealthMetric(
+                            title: "Diversity",
+                            value: "High",
+                            icon: "sparkles"
+                        ),
+                        rightMetric: HealthMetric(
+                            title: "Inflammation",
+                            value: "Low",
+                            icon: "waveform.path.ecg"
+                        )
+                    )
+
+                    ProductCarousel()
+
+                    InsightBanner(message: "Your fiber intake is trending up - nice work")
+
+                    ShipmentCard()
+
+                    TrendCard()
+
+                    GoalProgressRow()
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 16)
+                .padding(.bottom, 104)
+            }
+
+            BottomTabBar(selectedTab: .home)
         }
-        .padding()
     }
 }
 
