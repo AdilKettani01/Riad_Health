@@ -21,11 +21,7 @@ struct ShipmentCard: View {
                 .font(.appSans(size: 18, weight: .medium))
                 .foregroundStyle(Color.darkText)
 
-            HStack(alignment: .top, spacing: 0) {
-                ForEach(steps) { step in
-                    ShipmentStepView(step: step)
-                }
-            }
+            ShipmentProgressView(steps: steps)
 
             HStack {
                 Spacer()
@@ -58,23 +54,63 @@ struct ShipmentStep: Identifiable {
     let state: State
 }
 
+struct ShipmentProgressView: View {
+    let steps: [ShipmentStep]
+    private let circleSize: CGFloat = 30
+    private let lineHeight: CGFloat = 5
+    private let topInset: CGFloat = 4
+
+    var body: some View {
+        GeometryReader { geometry in
+            let stepWidth = geometry.size.width / CGFloat(steps.count)
+            let centers = steps.indices.map { index in
+                stepWidth * (CGFloat(index) + 0.5)
+            }
+
+            ZStack(alignment: .topLeading) {
+                ForEach(steps.indices.dropLast(), id: \.self) { index in
+                    Capsule()
+                        .fill(lineColor(after: steps[index]))
+                        .frame(
+                            width: centers[index + 1] - centers[index] - circleSize,
+                            height: lineHeight
+                        )
+                        .position(
+                            x: (centers[index] + centers[index + 1]) / 2,
+                            y: topInset + circleSize / 2
+                        )
+                }
+
+                HStack(alignment: .top, spacing: 0) {
+                    ForEach(steps) { step in
+                        ShipmentStepView(step: step, circleSize: circleSize)
+                            .frame(width: stepWidth)
+                    }
+                }
+                .padding(.top, topInset)
+            }
+        }
+        .frame(height: 100)
+    }
+
+    private func lineColor(after step: ShipmentStep) -> Color {
+        step.state == .complete ? Color.primaryGreen : Color.warmNeutralBorder
+    }
+}
+
 struct ShipmentStepView: View {
     let step: ShipmentStep
+    let circleSize: CGFloat
 
     var body: some View {
         VStack(spacing: 8) {
             ZStack {
-                Rectangle()
-                    .fill(lineColor)
-                    .frame(height: 3)
-                    .offset(x: 32)
-
                 Circle()
                     .fill(circleFill)
-                    .frame(width: 22, height: 22)
+                    .frame(width: circleSize, height: circleSize)
                     .overlay {
                         Circle()
-                            .stroke(Color.primaryGreen, lineWidth: step.state == .upcoming ? 0 : 2)
+                            .strokeBorder(circleStrokeColor, lineWidth: 2)
                     }
 
                 if step.state == .complete {
@@ -83,7 +119,7 @@ struct ShipmentStepView: View {
                         .foregroundStyle(.white)
                 }
             }
-            .frame(height: 24)
+            .frame(height: circleSize)
 
             Text(step.title)
                 .font(.appSans(size: 12, weight: step.state == .current ? .semibold : .regular))
@@ -96,7 +132,6 @@ struct ShipmentStepView: View {
                 .foregroundStyle(step.state == .current ? Color.primaryGreen : Color.mutedText)
         }
         .frame(maxWidth: .infinity)
-        .clipped()
     }
 
     private var circleFill: Color {
@@ -110,7 +145,7 @@ struct ShipmentStepView: View {
         }
     }
 
-    private var lineColor: Color {
+    private var circleStrokeColor: Color {
         step.state == .upcoming ? Color.warmNeutralBorder : Color.primaryGreen
     }
 }

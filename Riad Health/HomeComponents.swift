@@ -145,8 +145,8 @@ struct ScoreRing: View {
 
 struct ProductCarousel: View {
     private let products = [
-        Product(name: "DS-01 Daily Synbiotic", tint: .primaryGreen, showsAction: true),
-        Product(name: "PDS-08 Pediatric", tint: .secondarySage, showsAction: false)
+        Product(name: "DS-01 Daily Synbiotic", tint: .primaryGreen, showsAction: true, imageName: "pill_box_2"),
+        Product(name: "PDS-08 Pediatric", tint: .secondarySage, showsAction: false, imageName: "pill_box_3")
     ]
 
     var body: some View {
@@ -166,15 +166,15 @@ struct Product: Identifiable {
     let name: String
     let tint: Color
     let showsAction: Bool
+    let imageName: String
 }
 
 struct ProductCard: View {
     let product: Product
-
+    
     var body: some View {
         HStack(spacing: 14) {
-            ProductBottle(tint: product.tint)
-
+            Image(product.imageName).resizable().frame(width: 118, height: 118).scaledToFit()
             VStack(alignment: .leading, spacing: 16) {
                 Text(product.name)
                     .font(.appSerif(size: 21))

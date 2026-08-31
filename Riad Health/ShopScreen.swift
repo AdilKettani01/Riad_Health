@@ -14,7 +14,7 @@ struct ShopScreen: View {
                 Header(title: "Shop")
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Your daily ritual")
+                    Text("Your daily routine")
                         .font(.appSerif(size: 30))
                         .foregroundStyle(Color.darkText)
 

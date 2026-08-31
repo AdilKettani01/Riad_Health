@@ -41,7 +41,7 @@ struct HomeScreen: View {
             VStack(alignment: .leading, spacing: 18) {
                 Header(title: "Riad Health")
 
-                GreetingView(name: "Alex", day: 42)
+                GreetingView(name: "Adil", day: 42)
 
                 HealthScoreSummary(
                     score: 82,
