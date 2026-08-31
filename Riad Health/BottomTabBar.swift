@@ -27,7 +27,7 @@ enum AppTab: String, CaseIterable, Identifiable {
         case .insights:
             return "lightbulb"
         case .profile:
-            return "user"
+            return "face-slightly-smiling"
         }
     }
 

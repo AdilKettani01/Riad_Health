@@ -37,7 +37,7 @@ struct ProfileIdentityCard: View {
                 .clipShape(Circle())
 
             VStack(alignment: .leading, spacing: 10) {
-                Text("Alex Morgan")
+                Text("Adil Kettani")
                     .font(.appSerif(size: 37))
                     .foregroundStyle(Color.darkText)
                     .lineLimit(1)
@@ -91,11 +91,10 @@ struct JourneyCard: View {
                 }
             }
 
-            LeafAccent()
-                .stroke(Color.secondarySage.opacity(0.62), lineWidth: 1.4)
+            Image("leaf").resizable().scaledToFit()
                 .frame(width: 58, height: 70)
                 .padding(.trailing, 18)
-                .padding(.top, 18)
+                .rotationEffect(Angle(degrees: 40))
         }
         .padding(22)
         .background(Color.paleSage.opacity(0.65), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
@@ -156,12 +155,14 @@ struct ProfileGoalsSection: View {
                 .buttonStyle(.plain)
                 .foregroundStyle(Color.primaryGreen)
             }
-
-            HStack(spacing: 10) {
+            ScrollView(.horizontal, showsIndicators: false){ HStack(spacing: 10) {
                 ForEach(goals) { goal in
                     ProfileGoalChip(goal: goal)
                 }
-            }
+            }}
+            
+            
+           
         }
     }
 }
@@ -210,17 +211,15 @@ struct MembershipCard: View {
                 .foregroundStyle(Color.darkText)
 
             HStack(spacing: 22) {
-                ProductBottle(tint: .primaryGreen)
-                    .scaleEffect(1.05)
-                    .frame(width: 112, height: 128)
+                Image("pill_box_3").resizable().scaledToFit().frame(width: 150)
 
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Daily Synbiotic")
-                        .font(.appSerif(size: 27))
+                        .font(.appSerif(size: 20))
                         .foregroundStyle(Color.darkText)
 
                     Text("Next shipment in 5 days")
-                        .font(.appSans(size: 17))
+                        .font(.appSans(size: 13))
                         .foregroundStyle(Color.primaryGreen)
 
                     Divider()
@@ -230,7 +229,7 @@ struct MembershipCard: View {
                     } label: {
                         HStack {
                             Text("Manage plan")
-                                .font(.appSans(size: 16, weight: .medium))
+                                .font(.appSans(size: 14, weight: .medium))
 
                             Spacer()
 

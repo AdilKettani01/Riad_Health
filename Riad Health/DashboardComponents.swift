@@ -301,7 +301,7 @@ struct GoalProgressCell: View {
             }
 
             HStack(spacing: 10) {
-                MiniProgressRing(progress: goal.progress)
+                MiniProgressRing(progress: goal.progress, isText: false)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(goal.current)
@@ -324,7 +324,7 @@ struct GoalProgressCell: View {
 
 struct MiniProgressRing: View {
     let progress: CGFloat
-
+    let isText: Bool
     var body: some View {
         ZStack {
             Circle()
@@ -334,10 +334,12 @@ struct MiniProgressRing: View {
                 .trim(from: 0, to: progress)
                 .stroke(Color.primaryGreen, style: StrokeStyle(lineWidth: 5, lineCap: .round))
                 .rotationEffect(.degrees(-90))
-
-            Text("\(Int(progress * 100))%")
-                .font(.appSans(size: 12, weight: .bold))
-                .foregroundStyle(Color.darkText)
+            if isText{
+                Text("\(Int(progress * 100))%")
+                    .font(.appSans(size: 12, weight: .bold))
+                    .foregroundStyle(Color.darkText)
+            }
+            
         }
         .frame(width: 52, height: 52)
     }

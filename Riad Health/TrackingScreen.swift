@@ -149,7 +149,7 @@ struct HabitRow: View {
         HStack(spacing: 18) {
             TrackingIconBadge(icon: habit.icon, fallback: habit.fallback)
 
-            MiniProgressRing(progress: habit.progress)
+            MiniProgressRing(progress: habit.progress,isText: true)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(habit.title)

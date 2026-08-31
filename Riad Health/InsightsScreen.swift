@@ -47,8 +47,7 @@ struct WeeklyStoryCard: View {
             HStack {
                 VStack(alignment: .leading, spacing: 18) {
                     HStack(spacing: 18) {
-                        LucideIcon(name: "sparkles", fallbackSystemName: "sparkles", size: 38)
-                            .foregroundStyle(Color.primaryGreen)
+                        Image("molecule").resizable().scaledToFit().frame(width: 50,height: 50).foregroundColor(.accent)
 
                         Text("THIS WEEK")
                             .font(.appSans(size: 12, weight: .semibold))
@@ -60,16 +59,17 @@ struct WeeklyStoryCard: View {
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Your routine is working for you")
-                            .font(.appSerif(size: 27))
+                            .font(.appSerif(size: 19))
                             .foregroundStyle(Color.darkText)
                             .lineLimit(2)
+                            .frame(maxWidth: .infinity, alignment: .leading)
 
                         Text("On days you met your fiber goal, your energy check-ins were 18% higher.")
-                            .font(.appSans(size: 16))
+                            .font(.appSans(size: 10))
                             .foregroundStyle(Color.darkText)
                             .lineSpacing(3)
                             .lineLimit(3)
-                    }
+                    }.frame(maxWidth: .infinity, alignment: .leading)
 
                     Button {
                     } label: {
@@ -81,13 +81,17 @@ struct WeeklyStoryCard: View {
                     .foregroundStyle(Color.darkText)
                 }
 
-                Spacer(minLength: 70)
+                Spacer(minLength: 20)
             }
 
-            MoleculePattern()
-                .stroke(Color.secondarySage.opacity(0.2), lineWidth: 2)
+            Image("olive_leaf")
+                .resizable()
                 .frame(width: 170, height: 160)
                 .offset(x: 28, y: 18)
+                .foregroundColor(.accent)
+                .scaledToFit()
+                .opacity(0.02)
+                .zIndex(10)
         }
         .padding(24)
         .frame(maxWidth: .infinity)
@@ -201,10 +205,13 @@ struct Sparkline: View {
 
 struct InsightTwoColumnCards: View {
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            StrongestHabitCard()
-            ScienceCard()
+        ScrollView(.horizontal, showsIndicators: false){
+            HStack(alignment: .top, spacing: 12) {
+                StrongestHabitCard()
+                ScienceCard()
+            }
         }
+        
     }
 }
 
@@ -214,24 +221,27 @@ struct StrongestHabitCard: View {
             Text("Your strongest habit")
                 .font(.appSans(size: 16, weight: .medium))
                 .foregroundStyle(Color.darkText)
-
-            HStack(spacing: 16) {
-                ZStack {
-                    MiniProgressRing(progress: 0.86)
-                        .scaleEffect(1.28)
-
-                    VStack(spacing: 0) {
-                        Text("6")
-                            .font(.appSerif(size: 32))
-                            .foregroundStyle(Color.primaryGreen)
-
-                        Text("day\nstreak")
-                            .font(.appSans(size: 11, weight: .medium))
-                            .multilineTextAlignment(.center)
-                            .foregroundStyle(Color.darkText)
+            
+                HStack(spacing: 16) {
+                    ZStack {
+                        MiniProgressRing(progress: 0.86, isText: false)
+                            .scaleEffect(1.28)
+                        
+                        VStack(spacing: 0) {
+                            Text("6")
+                                .font(.appSerif(size: 19))
+                                .foregroundStyle(Color.primaryGreen)
+                            
+                            Text("day\nstreak")
+                                .font(.appSans(size: 9, weight: .medium))
+                                .multilineTextAlignment(.center)
+                                .foregroundStyle(Color.darkText)
+                        }
                     }
-                }
-                .frame(width: 80, height: 80)
+                    .frame(width: 80, height: 80)
+                
+            
+            
 
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Morning synbiotic")
@@ -289,15 +299,7 @@ struct ScienceCard: View {
                 .font(.appSans(size: 16, weight: .medium))
                 .foregroundStyle(Color.darkText)
 
-            HStack(spacing: 12) {
-                LeafAccent()
-                    .stroke(Color.secondarySage.opacity(0.75), lineWidth: 1.4)
-                    .frame(width: 70, height: 82)
-
-                MicrobePlate()
-                    .frame(width: 76, height: 76)
-            }
-            .frame(maxWidth: .infinity)
+            Image("Microbes").resizable().scaledToFit().frame(width: 200)
 
             Text("Why diverse plants matter")
                 .font(.appSans(size: 17, weight: .semibold))
@@ -349,23 +351,27 @@ struct MicrobePlate: View {
 
 struct TryNextCard: View {
     var body: some View {
-        HStack(spacing: 16) {
-            LucideIcon(name: "sprout", fallbackSystemName: "leaf", size: 30)
-                .foregroundStyle(Color.primaryGreen)
-                .frame(width: 58, height: 58)
+        HStack(spacing: 10) {
+            Image("two_leafs").resizable()
+                .foregroundColor(.accent)
+                .frame(width: 38 , height: 38)
+                .padding(10)
                 .background(Color.paleSage.opacity(0.75), in: Circle())
 
             VStack(alignment: .leading, spacing: 4) {
                 Text("Try this next")
-                    .font(.appSans(size: 14, weight: .semibold))
+                    .font(.appSans(size: 12, weight: .semibold))
                     .foregroundStyle(Color.darkText)
 
-                Text("Add one extra plant today")
-                    .font(.appSans(size: 17, weight: .medium))
+                Text("Add one extra plant")
+                    .font(.appSans(size: 13, weight: .medium))
                     .foregroundStyle(Color.darkText)
+                    .frame(maxWidth:   .infinity)
+                    .lineLimit(1)
 
                 Text("A simple step toward more diversity.")
-                    .font(.appSans(size: 14))
+                    .font(.appSans(size:12))
+                    .lineLimit(2)
                     .foregroundStyle(Color.mutedText)
             }
 
@@ -375,8 +381,8 @@ struct TryNextCard: View {
             } label: {
                 Label("View ideas", systemImage: "chevron.right")
                     .labelStyle(.titleAndIcon)
-                    .font(.appSans(size: 14, weight: .semibold))
-                    .padding(.horizontal, 16)
+                    .font(.appSans(size: 10, weight: .semibold))
+                    .padding( 16)
                     .frame(height: 48)
                     .background(Color.paleSage.opacity(0.75), in: Capsule())
             }
@@ -415,17 +421,17 @@ struct MonthlySnapshotCard: View {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 6) {
                     Text("Gut Health Score")
-                        .font(.appSans(size: 16, weight: .semibold))
+                        .font(.appSans(size: 17, weight: .bold))
                         .foregroundStyle(Color.darkText)
 
-                    LucideIcon(name: "info", fallbackSystemName: "info.circle", size: 16)
+                    LucideIcon(name: "info", fallbackSystemName: "info.circle", size: 20)
                         .foregroundStyle(Color.mutedText)
                 }
 
                 SnapshotChart(values: values)
-                    .frame(height: 150)
+                    .frame(height: 230)
             }
-            .padding(16)
+            .padding(20)
             .riadCard()
         }
     }
@@ -433,74 +439,111 @@ struct MonthlySnapshotCard: View {
 
 struct SnapshotChart: View {
     let values: [CGFloat]
+    private let yLabels = ["100", "75", "50", "25", "0"]
+    private let xLabels = [
+        ChartDateLabel(title: "Apr 16", position: 0),
+        ChartDateLabel(title: "Apr 23", position: 0.32),
+        ChartDateLabel(title: "Apr 30", position: 0.55),
+        ChartDateLabel(title: "May 7", position: 0.78),
+        ChartDateLabel(title: "May 14", position: 1)
+    ]
 
     var body: some View {
         GeometryReader { geometry in
-            let points = chartPoints(in: geometry.size)
+            let plotLeft: CGFloat = 48
+            let plotRight: CGFloat = 12
+            let plotTop: CGFloat = 8
+            let plotBottom: CGFloat = 34
+            let plotRect = CGRect(
+                x: plotLeft,
+                y: plotTop,
+                width: geometry.size.width - plotLeft - plotRight,
+                height: geometry.size.height - plotTop - plotBottom
+            )
+            let points = chartPoints(in: plotRect)
 
             ZStack(alignment: .topLeading) {
-                VStack(spacing: 0) {
-                    ForEach(["100", "75", "50", "25", "0"], id: \.self) { label in
-                        HStack(spacing: 8) {
-                            Text(label)
-                                .font(.appSans(size: 11))
-                                .foregroundStyle(Color.mutedText)
-                                .frame(width: 30, alignment: .leading)
+                ForEach(Array(yLabels.enumerated()), id: \.offset) { index, label in
+                    let y = plotRect.minY + CGFloat(index) / CGFloat(yLabels.count - 1) * plotRect.height
 
-                            Divider()
-                                .overlay(Color.warmNeutralBorder.opacity(0.38))
-                        }
-                        Spacer()
+                    Text(label)
+                        .font(.appSans(size: 12, weight: .medium))
+                        .foregroundStyle(Color.mutedText)
+                        .position(x: 15, y: y)
+
+                    Path { path in
+                        path.move(to: CGPoint(x: plotRect.minX, y: y))
+                        path.addLine(to: CGPoint(x: plotRect.maxX, y: y))
                     }
+                    .stroke(Color.warmNeutralBorder.opacity(0.26), lineWidth: 1)
                 }
+
+                Path { path in
+                    path.move(to: CGPoint(x: plotRect.minX, y: plotRect.minY))
+                    path.addLine(to: CGPoint(x: plotRect.minX, y: plotRect.maxY))
+                }
+                .stroke(Color.warmNeutralBorder.opacity(0.38), lineWidth: 1)
 
                 Path { path in
                     guard let first = points.first else { return }
                     path.move(to: first)
                     points.dropFirst().forEach { path.addLine(to: $0) }
-                    path.addLine(to: CGPoint(x: geometry.size.width, y: geometry.size.height))
-                    path.addLine(to: CGPoint(x: 0, y: geometry.size.height))
+                    path.addLine(to: CGPoint(x: plotRect.maxX, y: plotRect.maxY))
+                    path.addLine(to: CGPoint(x: plotRect.minX, y: plotRect.maxY))
                     path.closeSubpath()
                 }
-                .offset(x: 30)
-                .fill(Color.paleSage.opacity(0.55))
+                .fill(Color.paleSage.opacity(0.62))
 
                 Path { path in
                     guard let first = points.first else { return }
                     path.move(to: first)
                     points.dropFirst().forEach { path.addLine(to: $0) }
                 }
-                .offset(x: 30)
-                .stroke(Color.primaryGreen, style: StrokeStyle(lineWidth: 2.4, lineCap: .round, lineJoin: .round))
+                .stroke(Color.primaryGreen, style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
+
+                ForEach(xLabels) { label in
+                    Text(label.title)
+                        .font(.appSans(size: 13, weight: .medium))
+                        .foregroundStyle(Color.mutedText)
+                        .position(
+                            x: plotRect.minX + label.position * plotRect.width,
+                            y: plotRect.maxY + 20
+                        )
+                }
 
                 if let last = points.last {
-                    Text("82")
-                        .font(.appSans(size: 13, weight: .bold))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 9)
-                        .padding(.vertical, 8)
-                        .background(Color.primaryGreen, in: RoundedRectangle(cornerRadius: 6))
-                        .position(x: last.x + 30, y: max(last.y - 30, 18))
+                    VStack(spacing: 4) {
+                        Text("82")
+                            .font(.appSans(size: 15, weight: .bold))
+                            .foregroundStyle(.white)
+                            .frame(width: 42, height: 34)
+                            .background(Color.primaryGreen, in: RoundedRectangle(cornerRadius: 8))
 
-                    Circle()
-                        .fill(Color.primaryGreen)
-                        .frame(width: 14, height: 14)
-                        .overlay(Circle().stroke(Color.secondarySage, lineWidth: 2))
-                        .position(x: last.x + 30, y: last.y)
+                        Circle()
+                            .fill(Color.primaryGreen)
+                            .frame(width: 15, height: 15)
+                            .overlay(Circle().stroke(Color.secondarySage.opacity(0.75), lineWidth: 3))
+                    }
+                    .position(x: last.x, y: last.y - 19)
                 }
             }
-            .padding(.trailing, 30)
         }
     }
 
-    private func chartPoints(in size: CGSize) -> [CGPoint] {
+    private func chartPoints(in rect: CGRect) -> [CGPoint] {
         values.enumerated().map { index, value in
             CGPoint(
-                x: CGFloat(index) / CGFloat(values.count - 1) * (size.width - 60),
-                y: (1 - value / 100) * (size.height - 18) + 9
+                x: rect.minX + CGFloat(index) / CGFloat(values.count - 1) * rect.width,
+                y: rect.minY + (1 - value / 100) * rect.height
             )
         }
     }
+}
+
+struct ChartDateLabel: Identifiable {
+    let id = UUID()
+    let title: String
+    let position: CGFloat
 }
 
 struct MoleculePattern: Shape {
