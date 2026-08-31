@@ -115,6 +115,8 @@ struct LucideIconImage: View {
 
 struct ScoreRing: View {
     let score: Int
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var displayedProgress: CGFloat = 0
 
     var body: some View {
         ZStack {
@@ -122,7 +124,7 @@ struct ScoreRing: View {
                 .stroke(Color.secondarySage.opacity(0.35), lineWidth: 12)
 
             Circle()
-                .trim(from: 0, to: CGFloat(score) / 100)
+                .trim(from: 0, to: reduceMotion ? CGFloat(score) / 100 : displayedProgress)
                 .stroke(
                     Color.primaryGreen,
                     style: StrokeStyle(lineWidth: 12, lineCap: .round)
@@ -140,6 +142,13 @@ struct ScoreRing: View {
             }
         }
         .frame(width: 136, height: 136)
+        .onAppear {
+            displayedProgress = reduceMotion ? CGFloat(score) / 100 : 0
+            guard !reduceMotion else { return }
+            withAnimation(RiadMotion.data) {
+                displayedProgress = CGFloat(score) / 100
+            }
+        }
     }
 }
 
@@ -154,10 +163,13 @@ struct ProductCarousel: View {
             HStack(spacing: 12) {
                 ForEach(products) { product in
                     ProductCard(product: product)
+                        .riadCarouselItem()
                 }
             }
             .padding(.vertical, 2)
+            .scrollTargetLayout()
         }
+        .scrollTargetBehavior(.viewAligned)
     }
 }
 
@@ -182,12 +194,11 @@ struct ProductCard: View {
                     .lineLimit(2)
 
                 if product.showsAction {
-                    Button {
-                    } label: {
+                    NavigationLink(value: AppRoute.log("Morning synbiotic")) {
                         Label("Mark as taken", systemImage: "checkmark.circle.fill")
                             .font(.appSans(size: 15, weight: .medium))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(RiadPressStyle())
                     .foregroundStyle(Color.primaryGreen)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 12)
@@ -244,27 +255,30 @@ struct InsightBanner: View {
     let message: String
 
     var body: some View {
-        HStack(spacing: 12) {
-            LucideIconImage(id: "trending-up", fallbackSystemImage: "arrow.up.right")
-                .frame(width: 14, height: 14)
+        NavigationLink(value: AppRoute.insight("Fiber consistency")) {
+            HStack(spacing: 12) {
+                LucideIconImage(id: "trending-up", fallbackSystemImage: "arrow.up.right")
+                    .frame(width: 14, height: 14)
 
-            Text(message)
-                .font(.appSans(size: 17))
-                .foregroundStyle(Color.darkText)
-                .lineLimit(2)
+                Text(message)
+                    .font(.appSans(size: 17))
+                    .foregroundStyle(Color.darkText)
+                    .lineLimit(2)
 
-            Spacer()
+                Spacer()
 
-            Image(systemName: "chevron.right")
-                .font(.appSans(size: 15, weight: .semibold))
-                .foregroundStyle(Color.primaryGreen)
+                Image(systemName: "chevron.right")
+                    .font(.appSans(size: 15, weight: .semibold))
+                    .foregroundStyle(Color.primaryGreen)
+            }
+            .padding(16)
+            .background(Color.paleSage.opacity(0.7))
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .stroke(Color.warmNeutralBorder.opacity(0.45), lineWidth: 1)
+            }
         }
-        .padding(16)
-        .background(Color.paleSage.opacity(0.7))
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(Color.warmNeutralBorder.opacity(0.45), lineWidth: 1)
-        }
+        .buttonStyle(RiadPressStyle())
     }
 }

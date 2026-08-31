@@ -47,8 +47,7 @@ struct ProfileIdentityCard: View {
                     .font(.appSans(size: 18))
                     .foregroundStyle(Color.mutedText)
 
-                Button {
-                } label: {
+                NavigationLink(value: AppRoute.editProfile) {
                     Text("Edit profile")
                         .font(.appSans(size: 16, weight: .medium))
                         .foregroundStyle(Color.primaryGreen)
@@ -59,7 +58,7 @@ struct ProfileIdentityCard: View {
                                 .stroke(Color.primaryGreen, lineWidth: 1.2)
                         }
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(RiadPressStyle())
             }
         }
     }
@@ -146,13 +145,12 @@ struct ProfileGoalsSection: View {
 
                 Spacer()
 
-                Button {
-                } label: {
+                NavigationLink(value: AppRoute.editGoals) {
                     Text("Edit goals")
                         .font(.appSans(size: 15, weight: .medium))
                         .underline()
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(RiadPressStyle())
                 .foregroundStyle(Color.primaryGreen)
             }
             ScrollView(.horizontal, showsIndicators: false){ HStack(spacing: 10) {
@@ -179,8 +177,7 @@ struct ProfileGoalChip: View {
     let goal: ProfileGoal
 
     var body: some View {
-        Button {
-        } label: {
+        NavigationLink(value: AppRoute.goal(goal.title)) {
             HStack(spacing: 8) {
                 LucideIcon(name: goal.icon, fallbackSystemName: goal.fallback, size: 18)
 
@@ -199,7 +196,7 @@ struct ProfileGoalChip: View {
                     .stroke(goal.isSelected ? Color.primaryGreen : Color.warmNeutralBorder, lineWidth: 1)
             }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(RiadPressStyle())
     }
 }
 
@@ -225,8 +222,7 @@ struct MembershipCard: View {
                     Divider()
                         .padding(.vertical, 6)
 
-                    Button {
-                    } label: {
+                    NavigationLink(value: AppRoute.subscription) {
                         HStack {
                             Text("Manage plan")
                                 .font(.appSans(size: 14, weight: .medium))
@@ -237,7 +233,7 @@ struct MembershipCard: View {
                                 .font(.appSans(size: 13, weight: .semibold))
                         }
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(RiadPressStyle())
                     .foregroundStyle(Color.darkText)
                 }
             }
@@ -287,8 +283,7 @@ struct ProfileListRow: View {
     let item: ProfileListItem
 
     var body: some View {
-        Button {
-        } label: {
+        NavigationLink(value: route) {
             HStack(spacing: 16) {
                 LucideIcon(name: item.icon, fallbackSystemName: item.fallback, size: 21)
                     .foregroundStyle(Color.primaryGreen)
@@ -314,7 +309,26 @@ struct ProfileListRow: View {
             .padding(.horizontal, 18)
             .frame(height: 64)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(RiadPressStyle())
+    }
+
+    private var route: AppRoute {
+        switch item.title {
+        case "Dietary preferences":
+            return .preference(.dietary)
+        case "Reminders":
+            return .preference(.reminders)
+        case "Connected apps":
+            return .preference(.connectedApps)
+        case "Your data & privacy":
+            return .privacy
+        case "Help center":
+            return .help
+        case "Contact support":
+            return .contact
+        default:
+            return .help
+        }
     }
 }
 

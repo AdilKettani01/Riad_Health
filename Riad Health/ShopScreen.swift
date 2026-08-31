@@ -54,15 +54,14 @@ struct PlanCard: View {
                     .font(.appSans(size: 14))
                     .foregroundStyle(Color.mutedText)
 
-                Button {
-                } label: {
+                NavigationLink(value: AppRoute.subscription) {
                     Text("Manage plan")
                         .font(.appSans(size: 14, weight: .semibold))
                         .foregroundStyle(.white)
                         .frame(width: 150, height: 52)
                         .background(Color.primaryGreen, in: RoundedRectangle(cornerRadius: 8))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(RiadPressStyle())
 
                 Label {
                     Text("Arrives in 5 days")
@@ -127,13 +126,12 @@ struct RecommendedProductsSection: View {
 
                 Spacer()
 
-                Button {
-                } label: {
+                NavigationLink(value: AppRoute.catalog(nil)) {
                     Label("See all", systemImage: "chevron.right")
                         .labelStyle(.titleAndIcon)
                         .font(.appSans(size: 15, weight: .medium))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(RiadPressStyle())
                 .foregroundStyle(Color.darkText)
             }
 
@@ -141,10 +139,13 @@ struct RecommendedProductsSection: View {
                 HStack(spacing: 12) {
                     ForEach(products) { product in
                         ShopProductCard(product: product)
+                            .riadCarouselItem()
                     }
                 }
                 .padding(.vertical, 2)
+                .scrollTargetLayout()
             }
+            .scrollTargetBehavior(.viewAligned)
         }
     }
 }
@@ -196,8 +197,7 @@ struct ShopProductCard: View {
 
                 Spacer()
 
-                Button {
-                } label: {
+                NavigationLink(value: AppRoute.product(product.name)) {
                     LucideIcon(name: "plus", fallbackSystemName: "plus", size: 22)
                         .frame(width: 38, height: 38)
                         .overlay {
@@ -205,7 +205,7 @@ struct ShopProductCard: View {
                                 .stroke(Color.primaryGreen, lineWidth: 1.2)
                         }
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(RiadPressStyle())
                 .foregroundStyle(Color.primaryGreen)
             }
         }
@@ -267,13 +267,12 @@ struct ShopInsightBanner: View {
 
             Spacer()
 
-            Button {
-            } label: {
+            NavigationLink(value: AppRoute.insight("Building a resilient routine")) {
                 Label("Learn more", systemImage: "chevron.right")
                     .labelStyle(.titleAndIcon)
                     .font(.appSans(size: 14, weight: .semibold))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(RiadPressStyle())
             .foregroundStyle(Color.primaryGreen)
         }
         .padding(18)
@@ -319,8 +318,7 @@ struct GoalCategoryCard: View {
     let goal: GoalCategory
 
     var body: some View {
-        Button {
-        } label: {
+        NavigationLink(value: AppRoute.catalog(goal.title)) {
             HStack(spacing: 9) {
                 LucideIcon(name: goal.icon, fallbackSystemName: goal.fallback, size: 28)
                     .foregroundStyle(Color.primaryGreen)
@@ -344,7 +342,7 @@ struct GoalCategoryCard: View {
             .frame(height: 90)
             .riadCard()
         }
-        .buttonStyle(.plain)
+        .buttonStyle(RiadPressStyle())
     }
 }
 

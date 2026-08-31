@@ -27,6 +27,7 @@ struct TrackingScreen: View {
 }
 
 struct WeekSelector: View {
+    @State private var weekOffset = 0
     private let days = [
         TrackingDay(weekday: "MON", number: "13", isSelected: false),
         TrackingDay(weekday: "TUE", number: "14", isSelected: false),
@@ -40,25 +41,27 @@ struct WeekSelector: View {
         VStack(spacing: 10) {
             HStack {
                 Button {
+                    withAnimation(RiadMotion.state) { weekOffset -= 1 }
                 } label: {
                     LucideIcon(name: "chevron-left", fallbackSystemName: "chevron.left", size: 24)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(RiadPressStyle())
                 .foregroundStyle(Color.primaryGreen)
 
                 Spacer()
 
-                Text("May 13-19")
+                Text(weekOffset == 0 ? "May 13-19" : (weekOffset < 0 ? "May 6-12" : "May 20-26"))
                     .font(.appSans(size: 21, weight: .medium))
                     .foregroundStyle(Color.darkText)
 
                 Spacer()
 
                 Button {
+                    withAnimation(RiadMotion.state) { weekOffset += 1 }
                 } label: {
                     LucideIcon(name: "chevron-right", fallbackSystemName: "chevron.right", size: 24)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(RiadPressStyle())
                 .foregroundStyle(Color.primaryGreen)
             }
 
@@ -165,13 +168,12 @@ struct HabitRow: View {
 
             Spacer()
 
-            Button {
-            } label: {
+            NavigationLink(value: AppRoute.log(habit.title)) {
                 LucideIcon(name: "plus", fallbackSystemName: "plus", size: 22)
                     .frame(width: 50, height: 50)
                     .background(Color.paleSage.opacity(0.75), in: RoundedRectangle(cornerRadius: 16))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(RiadPressStyle())
             .foregroundStyle(Color.primaryGreen)
         }
         .padding(.vertical, 10)
@@ -226,8 +228,7 @@ struct QuickLogButton: View {
     let item: QuickLogItem
 
     var body: some View {
-        Button {
-        } label: {
+        NavigationLink(value: AppRoute.log(item.title)) {
             VStack(spacing: 8) {
                 LucideIcon(name: item.icon, fallbackSystemName: item.fallback, size: 32)
                     .foregroundStyle(Color.darkText)
@@ -242,11 +243,12 @@ struct QuickLogButton: View {
             .frame(height: 86)
             .background(Color.paleSage.opacity(0.55), in: RoundedRectangle(cornerRadius: 8))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(RiadPressStyle())
     }
 }
 
 struct MoodCard: View {
+    @State private var selectedMood = "Good"
     private let moods = [
         Mood(label: "Very low", icon: "face-angry", isSelected: false),
         Mood(label: "Low", icon: "face-expressionless", isSelected: false),
@@ -264,8 +266,7 @@ struct MoodCard: View {
 
                 Spacer()
 
-                Button {
-                } label: {
+                NavigationLink(value: AppRoute.moodNote) {
                     Label {
                         Text("Add note")
                     } icon: {
@@ -273,13 +274,19 @@ struct MoodCard: View {
                     }
                     .font(.appSans(size: 13, weight: .semibold))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(RiadPressStyle())
                 .foregroundStyle(Color.primaryGreen)
             }
 
             HStack(spacing: 12) {
                 ForEach(moods) { mood in
-                    MoodOption(mood: mood)
+                    MoodOption(
+                        mood: mood,
+                        isSelected: selectedMood == mood.label,
+                        onSelect: {
+                            withAnimation(RiadMotion.state) { selectedMood = mood.label }
+                        }
+                    )
                 }
             }
         }
@@ -297,25 +304,30 @@ struct Mood: Identifiable {
 
 struct MoodOption: View {
     let mood: Mood
+    let isSelected: Bool
+    let onSelect: () -> Void
 
     var body: some View {
-        VStack(spacing: 7) {
-            LucideIcon(name: mood.icon, fallbackSystemName: "face.smiling", size: 28)
-                .foregroundStyle(mood.isSelected ? Color.appWhite : Color.secondarySage)
-                .frame(width: 50, height: 50)
-                .background(mood.isSelected ? Color.primaryGreen : Color.clear, in: Circle())
-                .overlay {
-                    Circle()
-                        .stroke(mood.isSelected ? Color.primaryGreen : Color.secondarySage, lineWidth: 2)
-                }
+        Button(action: onSelect) {
+            VStack(spacing: 7) {
+                LucideIcon(name: mood.icon, fallbackSystemName: "face.smiling", size: 28)
+                    .foregroundStyle(isSelected ? Color.appWhite : Color.secondarySage)
+                    .frame(width: 50, height: 50)
+                    .background(isSelected ? Color.primaryGreen : Color.clear, in: Circle())
+                    .overlay {
+                        Circle()
+                            .stroke(isSelected ? Color.primaryGreen : Color.secondarySage, lineWidth: 2)
+                    }
 
-            Text(mood.label)
-                .font(.appSans(size: 12, weight: mood.isSelected ? .semibold : .regular))
-                .foregroundStyle(mood.isSelected ? Color.primaryGreen : Color.mutedText)
-                .lineLimit(1)
-                .minimumScaleFactor(0.65)
+                Text(mood.label)
+                    .font(.appSans(size: 12, weight: isSelected ? .semibold : .regular))
+                    .foregroundStyle(isSelected ? Color.primaryGreen : Color.mutedText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
+            }
+            .frame(maxWidth: .infinity)
         }
-        .frame(maxWidth: .infinity)
+        .buttonStyle(RiadPressStyle())
     }
 }
 
@@ -400,13 +412,12 @@ struct SymptomsDigestionCard: View {
 
                 Spacer()
 
-                Button {
-                } label: {
+                NavigationLink(value: AppRoute.trackingHistory) {
                     Label("View history", systemImage: "chevron.right")
                         .labelStyle(.titleAndIcon)
                         .font(.appSans(size: 13, weight: .semibold))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(RiadPressStyle())
                 .foregroundStyle(Color.darkText)
             }
 

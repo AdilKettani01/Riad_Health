@@ -26,13 +26,12 @@ struct ShipmentCard: View {
             HStack {
                 Spacer()
 
-                Button {
-                } label: {
+                NavigationLink(value: AppRoute.subscription) {
                     Label("Manage subscription", systemImage: "chevron.right")
                         .labelStyle(.titleAndIcon)
                         .font(.appSans(size: 16, weight: .semibold))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(RiadPressStyle())
                 .foregroundStyle(Color.primaryGreen)
             }
         }
@@ -184,6 +183,8 @@ struct TrendCard: View {
 
 struct LineChart: View {
     let values: [CGFloat]
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var revealProgress: CGFloat = 0
 
     var body: some View {
         GeometryReader { geometry in
@@ -207,12 +208,14 @@ struct LineChart: View {
                     path.closeSubpath()
                 }
                 .fill(Color.paleSage.opacity(0.65))
+                .opacity(reduceMotion ? 1 : revealProgress)
 
                 Path { path in
                     guard let firstPoint = points.first else { return }
                     path.move(to: firstPoint)
                     points.dropFirst().forEach { path.addLine(to: $0) }
                 }
+                .trim(from: 0, to: reduceMotion ? 1 : revealProgress)
                 .stroke(Color.primaryGreen, style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
 
                 if let lastPoint = points.last {
@@ -221,6 +224,8 @@ struct LineChart: View {
                         .frame(width: 16, height: 16)
                         .overlay(Circle().stroke(Color.appWhite, lineWidth: 3))
                         .position(lastPoint)
+                        .scaleEffect(reduceMotion ? 1 : 0.82 + revealProgress * 0.18)
+                        .opacity(reduceMotion ? 1 : revealProgress)
 
                     Text("82\nMay 13")
                         .font(.appSans(size: 12, weight: .bold))
@@ -229,7 +234,16 @@ struct LineChart: View {
                         .padding(8)
                         .background(Color.primaryGreen, in: RoundedRectangle(cornerRadius: 6))
                         .position(x: max(lastPoint.x - 8, 36), y: min(lastPoint.y + 48, geometry.size.height - 28))
+                        .offset(y: reduceMotion ? 0 : 8 * (1 - revealProgress))
+                        .opacity(reduceMotion ? 1 : revealProgress)
                 }
+            }
+        }
+        .onAppear {
+            revealProgress = reduceMotion ? 1 : 0
+            guard !reduceMotion else { return }
+            withAnimation(RiadMotion.data.delay(0.08)) {
+                revealProgress = 1
             }
         }
     }
@@ -285,53 +299,58 @@ struct GoalProgressCell: View {
     let goal: GoalProgress
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Text(goal.title)
-                    .font(.appSans(size: 14, weight: .semibold))
-                    .foregroundStyle(Color.darkText)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .font(.appSans(size: 13, weight: .semibold))
-                    .foregroundStyle(Color.mutedText)
-            }
-
-            HStack(spacing: 10) {
-                MiniProgressRing(progress: goal.progress, isText: false)
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(goal.current)
-                        .font(.appSans(size: 17, weight: .bold))
+        NavigationLink(value: AppRoute.goal(goal.title)) {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Text(goal.title)
+                        .font(.appSans(size: 14, weight: .semibold))
                         .foregroundStyle(Color.darkText)
                         .lineLimit(1)
-                        .minimumScaleFactor(0.8)
+                        .minimumScaleFactor(0.7)
 
-                    Text(goal.target)
-                        .font(.appSans(size: 12))
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.appSans(size: 13, weight: .semibold))
                         .foregroundStyle(Color.mutedText)
-                        .lineLimit(2)
+                }
+
+                HStack(spacing: 10) {
+                    MiniProgressRing(progress: goal.progress, isText: false)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(goal.current)
+                            .font(.appSans(size: 17, weight: .bold))
+                            .foregroundStyle(Color.darkText)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+
+                        Text(goal.target)
+                            .font(.appSans(size: 12))
+                            .foregroundStyle(Color.mutedText)
+                            .lineLimit(2)
+                    }
                 }
             }
+            .padding(14)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .padding(14)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .buttonStyle(RiadPressStyle())
     }
 }
 
 struct MiniProgressRing: View {
     let progress: CGFloat
     let isText: Bool
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var displayedProgress: CGFloat = 0
     var body: some View {
         ZStack {
             Circle()
                 .stroke(Color.secondarySage.opacity(0.35), lineWidth: 5)
 
             Circle()
-                .trim(from: 0, to: progress)
+                .trim(from: 0, to: reduceMotion ? progress : displayedProgress)
                 .stroke(Color.primaryGreen, style: StrokeStyle(lineWidth: 5, lineCap: .round))
                 .rotationEffect(.degrees(-90))
             if isText{
@@ -342,5 +361,12 @@ struct MiniProgressRing: View {
             
         }
         .frame(width: 52, height: 52)
+        .onAppear {
+            displayedProgress = reduceMotion ? progress : 0
+            guard !reduceMotion else { return }
+            withAnimation(RiadMotion.data) {
+                displayedProgress = progress
+            }
+        }
     }
 }

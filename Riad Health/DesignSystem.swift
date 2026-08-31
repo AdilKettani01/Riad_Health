@@ -41,6 +41,77 @@ extension View {
     }
 }
 
+enum RiadMotion {
+    static let screen = Animation.spring(response: 0.42, dampingFraction: 0.90, blendDuration: 0.12)
+    static let state = Animation.spring(response: 0.28, dampingFraction: 0.88, blendDuration: 0.08)
+    static let data = Animation.timingCurve(0.16, 1, 0.3, 1, duration: 0.78)
+    static let press = Animation.spring(response: 0.18, dampingFraction: 0.86)
+    static let reduced = Animation.easeOut(duration: 0.16)
+}
+
+private struct RiadTabTransitionModifier: ViewModifier {
+    let opacity: Double
+    let horizontalOffset: CGFloat
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(opacity)
+            .offset(x: horizontalOffset)
+    }
+}
+
+struct RiadPressStyle: ButtonStyle {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed && !reduceMotion ? 0.975 : 1)
+            .opacity(!isEnabled ? 0.46 : (configuration.isPressed ? 0.76 : 1))
+            .animation(reduceMotion ? nil : RiadMotion.press, value: configuration.isPressed)
+    }
+}
+
+private struct RiadCarouselItemModifier: ViewModifier {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    func body(content: Content) -> some View {
+        if reduceMotion {
+            content
+        } else {
+            content
+                .scrollTransition(.interactive, axis: .horizontal) { content, phase in
+                    content
+                        .scaleEffect(phase.isIdentity ? 1 : 0.965)
+                        .opacity(phase.isIdentity ? 1 : 0.78)
+                }
+        }
+    }
+}
+
+extension View {
+    func riadCarouselItem() -> some View {
+        modifier(RiadCarouselItemModifier())
+    }
+}
+
+extension AnyTransition {
+    static func riadTab(direction: CGFloat, reduceMotion: Bool) -> AnyTransition {
+        guard !reduceMotion else { return .opacity }
+
+        return .asymmetric(
+            insertion: .modifier(
+                active: RiadTabTransitionModifier(opacity: 0, horizontalOffset: 24 * direction),
+                identity: RiadTabTransitionModifier(opacity: 1, horizontalOffset: 0)
+            ),
+            removal: .modifier(
+                active: RiadTabTransitionModifier(opacity: 0, horizontalOffset: -14 * direction),
+                identity: RiadTabTransitionModifier(opacity: 1, horizontalOffset: 0)
+            )
+        )
+    }
+}
+
 struct LucideIcon: View {
     let name: String
     let fallbackSystemName: String

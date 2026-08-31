@@ -9,28 +9,47 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var selectedTab: AppTab = .home
+    @State private var tabDirection: CGFloat = 1
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            Color.creamBackground
-                .ignoresSafeArea()
+        NavigationStack {
+            ZStack(alignment: .bottom) {
+                Color.creamBackground
+                    .ignoresSafeArea()
 
-            Group {
-                switch selectedTab {
-                case .home:
-                    HomeScreen()
-                case .tracking:
-                    TrackingScreen()
-                case .shop:
-                    ShopScreen()
-                case .insights:
-                    InsightsScreen()
-                case .profile:
-                    ProfileScreen()
+                Group {
+                    switch selectedTab {
+                    case .home:
+                        HomeScreen()
+                    case .tracking:
+                        TrackingScreen()
+                    case .shop:
+                        ShopScreen()
+                    case .insights:
+                        InsightsScreen()
+                    case .profile:
+                        ProfileScreen()
+                    }
                 }
-            }
+                .id(selectedTab)
+                .transition(.riadTab(direction: tabDirection, reduceMotion: reduceMotion))
 
-            BottomTabBar(selectedTab: $selectedTab)
+                BottomTabBar(selectedTab: selectedTab, onSelect: selectTab)
+            }
+            .navigationDestination(for: AppRoute.self) { route in
+                AppRouteView(route: route)
+            }
+            .tint(Color.primaryGreen)
+        }
+    }
+
+    private func selectTab(_ tab: AppTab) {
+        guard tab != selectedTab else { return }
+        tabDirection = tab.position > selectedTab.position ? 1 : -1
+
+        withAnimation(reduceMotion ? RiadMotion.reduced : RiadMotion.screen) {
+            selectedTab = tab
         }
     }
 }

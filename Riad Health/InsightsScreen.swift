@@ -71,13 +71,12 @@ struct WeeklyStoryCard: View {
                             .lineLimit(3)
                     }.frame(maxWidth: .infinity, alignment: .leading)
 
-                    Button {
-                    } label: {
+                    NavigationLink(value: AppRoute.insight("Your weekly pattern")) {
                         Label("See the pattern", systemImage: "arrow.right")
                             .labelStyle(.titleAndIcon)
                             .font(.appSans(size: 15, weight: .semibold))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(RiadPressStyle())
                     .foregroundStyle(Color.darkText)
                 }
 
@@ -148,41 +147,46 @@ struct InsightChangeRow: View {
     let change: InsightChange
 
     var body: some View {
-        HStack(spacing: 10) {
-            LucideIcon(name: change.icon, fallbackSystemName: change.fallback, size: 24)
-                .foregroundStyle(Color.primaryGreen)
-                .frame(width: 44, height: 44)
-                .background(Color.paleSage.opacity(0.7), in: Circle())
+        NavigationLink(value: AppRoute.insight(change.title)) {
+            HStack(spacing: 10) {
+                LucideIcon(name: change.icon, fallbackSystemName: change.fallback, size: 24)
+                    .foregroundStyle(Color.primaryGreen)
+                    .frame(width: 44, height: 44)
+                    .background(Color.paleSage.opacity(0.7), in: Circle())
 
-            Text(change.title)
-                .font(.appSans(size: 14, weight: .medium))
-                .foregroundStyle(Color.darkText)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
+                Text(change.title)
+                    .font(.appSans(size: 14, weight: .medium))
+                    .foregroundStyle(Color.darkText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
 
-            Spacer()
+                Spacer()
 
-            Sparkline(values: change.points)
-                .frame(width: 72, height: 26)
+                Sparkline(values: change.points)
+                    .frame(width: 72, height: 26)
 
-            Text(change.value)
-                .font(.appSans(size: 14, weight: .semibold))
-                .foregroundStyle(Color.primaryGreen)
-                .lineLimit(2)
-                .minimumScaleFactor(0.72)
-                .frame(width: 58, alignment: .trailing)
+                Text(change.value)
+                    .font(.appSans(size: 14, weight: .semibold))
+                    .foregroundStyle(Color.primaryGreen)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.72)
+                    .frame(width: 58, alignment: .trailing)
 
-            Image(systemName: "chevron.right")
-                .font(.appSans(size: 12, weight: .semibold))
-                .foregroundStyle(Color.mutedText)
+                Image(systemName: "chevron.right")
+                    .font(.appSans(size: 12, weight: .semibold))
+                    .foregroundStyle(Color.mutedText)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 11)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 11)
+        .buttonStyle(RiadPressStyle())
     }
 }
 
 struct Sparkline: View {
     let values: [CGFloat]
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var revealProgress: CGFloat = 0
 
     var body: some View {
         GeometryReader { geometry in
@@ -198,7 +202,15 @@ struct Sparkline: View {
                 path.move(to: first)
                 points.dropFirst().forEach { path.addLine(to: $0) }
             }
+            .trim(from: 0, to: reduceMotion ? 1 : revealProgress)
             .stroke(Color.primaryGreen, style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
+        }
+        .onAppear {
+            revealProgress = reduceMotion ? 1 : 0
+            guard !reduceMotion else { return }
+            withAnimation(RiadMotion.data.delay(0.12)) {
+                revealProgress = 1
+            }
         }
     }
 }
@@ -377,8 +389,7 @@ struct TryNextCard: View {
 
             Spacer()
 
-            Button {
-            } label: {
+            NavigationLink(value: AppRoute.insight("Ideas for this week")) {
                 Label("View ideas", systemImage: "chevron.right")
                     .labelStyle(.titleAndIcon)
                     .font(.appSans(size: 10, weight: .semibold))
@@ -386,7 +397,7 @@ struct TryNextCard: View {
                     .frame(height: 48)
                     .background(Color.paleSage.opacity(0.75), in: Capsule())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(RiadPressStyle())
             .foregroundStyle(Color.primaryGreen)
         }
         .padding(18)

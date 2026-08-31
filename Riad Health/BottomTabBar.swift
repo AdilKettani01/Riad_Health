@@ -16,6 +16,10 @@ enum AppTab: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
+    var position: Int {
+        AppTab.allCases.firstIndex(of: self) ?? 0
+    }
+
     var icon: String {
         switch self {
         case .home:
@@ -48,51 +52,75 @@ enum AppTab: String, CaseIterable, Identifiable {
 }
 
 struct BottomTabBar: View {
-    @Binding var selectedTab: AppTab
+    let selectedTab: AppTab
+    let onSelect: (AppTab) -> Void
+    @Namespace private var selectionNamespace
 
     var body: some View {
-        HStack(spacing: 0) {
-            ForEach(AppTab.allCases) { tab in
-                Button {
-                    selectedTab = tab
-                } label: {
-                    BottomTabItem(tab: tab, isSelected: tab == selectedTab)
+        HStack {
+            HStack(spacing: 4) {
+                ForEach(AppTab.allCases) { tab in
+                    Button {
+                        onSelect(tab)
+                    } label: {
+                        BottomTabItem(
+                            tab: tab,
+                            isSelected: tab == selectedTab,
+                            selectionNamespace: selectionNamespace
+                        )
+                    }
+                    .buttonStyle(RiadPressStyle())
                 }
-                .buttonStyle(.plain)
             }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 28, style: .continuous)
+                    .stroke(Color.warmNeutralBorder.opacity(0.55), lineWidth: 1)
+            }
+            .shadow(color: .black.opacity(0.12), radius: 18, x: 0, y: 8)
         }
         .padding(.horizontal, 16)
-        .padding(.top, 12)
-        .padding(.bottom, 12)
-        .background(.ultraThinMaterial)
-        .overlay(alignment: .top) {
-            Divider()
-                .overlay(Color.warmNeutralBorder.opacity(0.65))
-        }
+        .padding(.bottom, 10)
+        .sensoryFeedback(.selection, trigger: selectedTab)
     }
 }
 
 struct BottomTabItem: View {
     let tab: AppTab
     let isSelected: Bool
+    let selectionNamespace: Namespace.ID
 
     var body: some View {
         VStack(spacing: 5) {
             LucideIcon(name: tab.icon, fallbackSystemName: tab.fallbackIcon, size: 24)
-                .frame(width: 30, height: 28)
+                .frame(width: 28, height: 26)
 
             Text(tab.rawValue)
-                .font(.appSans(size: 12, weight: isSelected ? .semibold : .regular))
+                .font(.appSans(size: 11, weight: isSelected ? .bold : .medium))
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
         }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 6)
         .foregroundStyle(isSelected ? Color.primaryGreen : Color.mutedText)
-        .frame(maxWidth: .infinity)
+        .background {
+            if isSelected {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(Color.paleSage.opacity(0.9))
+                    .matchedGeometryEffect(id: "selectedTab", in: selectionNamespace)
+            }
+        }
+        .scaleEffect(isSelected ? 1 : 0.985)
+        .animation(RiadMotion.state, value: isSelected)
+        .frame(maxWidth: .infinity, minHeight: 58)
         .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 
 #Preview {
-    BottomTabBar(selectedTab: .constant(.tracking))
+    BottomTabBar(selectedTab: .tracking, onSelect: { _ in })
         .background(Color.creamBackground)
 }
