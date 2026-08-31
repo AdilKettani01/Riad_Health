@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Riad Health connected dots</title>
+  <desc id="desc">Five sage green dots joined by fine lines on a transparent background.</desc>
+  <g fill="none" stroke="#A8C7B8" stroke-width="10" stroke-linecap="round" opacity=".95">
+    <path d="M104 102 256 256 408 104M256 256 112 408M256 256 400 406"/>
+  </g>
+  <g fill="#5D8F72">
+    <circle cx="104" cy="102" r="25"/>
+    <circle cx="408" cy="104" r="25"/>
+    <circle cx="256" cy="256" r="29"/>
+    <circle cx="112" cy="408" r="25"/>
+    <circle cx="400" cy="406" r="25"/>
+  </g>
+</svg>
