@@ -39,25 +39,25 @@ struct ShopScreen: View {
 struct PlanCard: View {
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
-            VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: 9) {
                 Text("YOUR PLAN")
                     .font(.appSans(size: 14, weight: .semibold))
                     .foregroundStyle(Color.secondarySage)
 
                 Text("Daily Synbiotic")
-                    .font(.appSerif(size: 34))
+                    .font(.appSerif(size: 30))
                     .foregroundStyle(Color.primaryGreen)
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
 
                 Text("Renews Jun 1")
-                    .font(.appSans(size: 17))
+                    .font(.appSans(size: 14))
                     .foregroundStyle(Color.mutedText)
 
                 Button {
                 } label: {
                     Text("Manage plan")
-                        .font(.appSans(size: 17, weight: .semibold))
+                        .font(.appSans(size: 14, weight: .semibold))
                         .foregroundStyle(.white)
                         .frame(width: 150, height: 52)
                         .background(Color.primaryGreen, in: RoundedRectangle(cornerRadius: 8))
@@ -66,7 +66,10 @@ struct PlanCard: View {
 
                 Label {
                     Text("Arrives in 5 days")
-                        .font(.appSans(size: 16, weight: .semibold))
+                        .font(.appSans(size: 13, weight: .semibold))
+                        .lineLimit(1)
+                            
+                        .frame(alignment: .leading)
                 } icon: {
                     LucideIcon(name: "truck", fallbackSystemName: "truck.box", size: 20)
                 }
@@ -76,14 +79,9 @@ struct PlanCard: View {
             Spacer(minLength: 6)
 
             ZStack(alignment: .trailing) {
-                LeafAccent()
-                    .stroke(Color.secondarySage.opacity(0.32), lineWidth: 1.4)
-                    .frame(width: 92, height: 158)
-                    .offset(x: 12)
+                Image("olive_leaf").resizable().scaledToFit().frame(width: 158, height: 158).scaleEffect(x:-1, y:1)
 
-                ProductBottle(tint: .primaryGreen)
-                    .scaleEffect(1.32)
-                    .padding(.trailing, 20)
+                Image("pill_box_3").resizable().scaledToFit().frame(width: 158, height: 158)
             }
             .frame(width: 150, height: 190)
         }
@@ -99,21 +97,24 @@ struct RecommendedProductsSection: View {
             description: "Daily gut & immune balance support",
             price: "$49.00",
             tint: .primaryGreen,
-            accent: .leaf
+            accent: .leaf,
+            imgName: "img1"
         ),
         ShopProduct(
             name: "Fiber + Prebiotic",
             description: "Supports regularity & digestive comfort",
             price: "$39.00",
             tint: .primaryGreen,
-            accent: .scoop
+            accent: .scoop,
+            imgName: "img2"
         ),
         ShopProduct(
             name: "Travel Pack",
             description: "Stay consistent, wherever you go",
             price: "$19.00",
             tint: .secondarySage,
-            accent: .pack
+            accent: .pack,
+            imgName: "img3"
         )
     ]
 
@@ -161,6 +162,7 @@ struct ShopProduct: Identifiable {
     let price: String
     let tint: Color
     let accent: Accent
+    let imgName: String
 }
 
 struct ShopProductCard: View {
@@ -168,37 +170,12 @@ struct ShopProductCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            ZStack(alignment: .bottomTrailing) {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(Color.paleSage.opacity(0.28))
-                    .frame(height: 170)
-
-                if product.accent == .leaf {
-                    LeafAccent()
-                        .stroke(Color.secondarySage.opacity(0.45), lineWidth: 1.2)
-                        .frame(width: 82, height: 92)
-                        .offset(x: -92, y: -16)
-                }
-
-                if product.accent == .scoop {
-                    Capsule()
-                        .fill(Color.warningGold.opacity(0.35))
-                        .frame(width: 54, height: 18)
-                        .rotationEffect(.degrees(-12))
-                        .offset(x: -18, y: -12)
-                }
-
-                if product.accent == .pack {
-                    ProductPouch(tint: product.tint)
-                        .padding(.trailing, 12)
-                        .padding(.bottom, 10)
-                } else {
-                    ProductBottle(tint: product.tint)
-                        .scaleEffect(1.18)
-                        .padding(.trailing, 44)
-                        .padding(.bottom, 20)
-                }
-            }
+            
+            Image(product.imgName).resizable().scaledToFit().frame(maxWidth:.infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, alignment: .center)
+        
+    
+            
 
             Text(product.name)
                 .font(.appSerif(size: 20))
@@ -272,16 +249,18 @@ struct ProductPouch: View {
 struct ShopInsightBanner: View {
     var body: some View {
         HStack(spacing: 18) {
-            LucideIcon(name: "sparkles", fallbackSystemName: "sparkles", size: 34)
+            LucideIcon(name: "shield", fallbackSystemName: "shield", size: 34)
                 .foregroundStyle(Color.primaryGreen)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text("Build a resilient routine")
-                    .font(.appSerif(size: 23))
+                    .font(.appSerif(size: 14))
+                    .lineLimit(1)
                     .foregroundStyle(Color.darkText)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 Text("Small daily choices add up to lasting balance and better days.")
-                    .font(.appSans(size: 14))
+                    .font(.appSans(size: 9))
                     .foregroundStyle(Color.mutedText)
                     .lineLimit(2)
             }
@@ -319,10 +298,11 @@ struct GoalCategorySection: View {
                 .font(.appSerif(size: 24))
                 .foregroundStyle(Color.darkText)
 
-            HStack(spacing: 10) {
-                ForEach(goals) { goal in
-                    GoalCategoryCard(goal: goal)
-                }
+            ScrollView(.horizontal, showsIndicators: false){
+                HStack(spacing: 12){
+                    ForEach(goals){ goal in GoalCategoryCard(goal: goal).frame(width: 180)
+                    }
+                }.padding(.vertical, 2)
             }
         }
     }
@@ -380,17 +360,19 @@ struct ShopBenefitsCard: View {
             Text("Why Riad Health")
                 .font(.appSerif(size: 24))
                 .foregroundStyle(Color.darkText)
+            ScrollView(.horizontal, showsIndicators: false){
+                HStack(spacing: 12) {
+                    ForEach(benefits) { benefit in
+                        ShopBenefitView(benefit: benefit)
 
-            HStack(spacing: 0) {
-                ForEach(benefits) { benefit in
-                    ShopBenefitView(benefit: benefit)
-
-                    if benefit.id != benefits.last?.id {
-                        Divider()
-                            .padding(.vertical, 6)
+                        if benefit.id != benefits.last?.id {
+                            Divider()
+                                .padding(.vertical, 6)
+                        }
                     }
                 }
-            }
+            }.padding(.vertical, 2)
+            
         }
         .padding(18)
         .riadCard()
